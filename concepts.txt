@@ -1,0 +1,10 @@
+
+
+function getTime(time){
+    const hour = time / 3600;
+    const remainingSeconds = time % 3600;
+    const minute = remainingSeconds / 60;
+    remainingSeconds = remainingSeconds % 60;
+    
+
+}
