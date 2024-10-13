@@ -4,7 +4,7 @@ function getVideosLength(time) {
   let remainingSeconds = parseInt(time % 3600);
   const minute = parseInt(remainingSeconds / 60);
   remainingSeconds = remainingSeconds % 60;
-  return ` ${hour}hr ${minute}mi ${remainingSeconds}sec `
+  return ` ${hour}hr ${minute}mi ${remainingSeconds}sec `;
 }
 
 // show categories buttons
@@ -21,32 +21,21 @@ function showVideos() {
     .then((data) => displayVideos(data.videos));
 }
 
-// {
-//   "category_id": "1003",
-//   "video_id": "aaaf",
-//   "thumbnail": "https://i.ibb.co/5LRQkKF/stick-and-stones.jpg",
-//   "title": "Sticks & Stones",
-//   "authors": [
-//       {
-//           "profile_picture": "https://i.ibb.co/rdTZrCM/dev.jpg",
-//           "profile_name": "Dave Chappelle",
-//           "verified": true
-//       }
-//   ],
-//   "others": {
-//       "views": "113K",
-//       "posted_date": ""
-//   },
-//   "description": "Dave Chappelle's 'Sticks & Stones' has garnered 113K views and remains a controversial yet highly engaging piece of stand-up comedy. Known for his fearless approach, Dave dives into a wide range of topics, delivering his unique perspective with wit and sharp humor. As a verified artist, Dave's comedy is raw, honest, and unapologetically funny."
-// }
-
+// show categories section when i click buttons
+const showCatagoriesSection = (id) => {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+  .then(res => res.json())
+  .then(data => displayVideos(data.category))
+  .catch(err => console.log("ERROR", err))
+};
 
 // display videos
 function displayVideos(videos) {
   const videosContainer = document.getElementById("videos-container");
+  videosContainer.innerHTML ="";
   // loop every elements
   videos.forEach((video) => {
-    console.log(video);
+    // console.log(video);
     const div = document.createElement("div");
     div.innerHTML = `
 
@@ -57,7 +46,11 @@ function displayVideos(videos) {
         alt="Shoes" />
         <div class="absolute bottom-2 right-2 bg-black text-white font-bold px-2 rounded">
        
-          ${ video.others.posted_date?.length === 0 ? "" : getVideosLength(video.others.posted_date)}
+          ${
+            video.others.posted_date?.length === 0
+              ? ""
+              : getVideosLength(video.others.posted_date)
+          }
         </div>
     </figure>
     <div class="py-2 flex gap-4">
@@ -94,15 +87,15 @@ function displayVideos(videos) {
 // display categories
 function displayCategories(categories) {
   const categoriesContainer = document.getElementById("categories");
-
   // loop every categories buttons
   categories.forEach((item) => {
-    const button = document.createElement("button");
-    button.classList = "btn font-bold text-gray-700 text-[16px]";
-    button.innerHTML = `
-        ${item.category}
-        `;
-    categoriesContainer.appendChild(button);
+    console.log(item);
+    const buttonContainer = document.createElement("div");
+
+    buttonContainer.innerHTML = `
+      <button onclick="showCatagoriesSection(${item.category_id})" class="btn font-bold text-gray-700 text-[16px]">${item.category}</button>
+    `;
+    categoriesContainer.appendChild(buttonContainer);
   });
 }
 
