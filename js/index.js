@@ -7,6 +7,17 @@ function getVideosLength(time) {
   return ` ${hour}hr ${minute}mi ${remainingSeconds}sec `;
 }
 
+// remove active class button
+const removeActiveButton = () => {
+  const buttons = document.getElementsByClassName("category-btn");
+  console.log(buttons);
+
+  for (const button of buttons) {
+    console.log(button);
+    button.classList.remove("active");
+  }
+};
+
 // show categories buttons
 function showCategories() {
   fetch("https://openapi.programming-hero.com/api/phero-tube/categories")
@@ -15,27 +26,74 @@ function showCategories() {
 }
 
 // show all videos
-function showVideos() {
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+function showVideos(videoSearch = "") {
+  fetch(
+    `https://openapi.programming-hero.com/api/phero-tube/videos?title=${videoSearch}`
+  )
     .then((res) => res.json())
     .then((data) => displayVideos(data.videos));
 }
 
-// show categories section when i click buttons
-const showCatagoriesSection = (id) => {
+// show categories section videos when i click buttons
+const showCategoriesSection = (id) => {
   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
-  .then(res => res.json())
-  .then(data => displayVideos(data.category))
-  .catch(err => console.log("ERROR", err))
+    .then((res) => res.json())
+    .then((data) => {
+      removeActiveButton();
+      // active id class
+      const activeBtn = document.getElementById(`categoriesBtn-${id}`);
+      activeBtn.classList.add("active");
+
+      displayVideos(data.category);
+    })
+    .catch((err) => console.log("ERROR", err));
+};
+
+// show videos details
+const videosDetails = async (videoId) => {
+  console.log(videoId);
+  const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+  const res = await fetch(uri);
+  const data = await res.json();
+  displayDetails(data.video);
+};
+
+const displayDetails = (video) => {
+  const modalContainer = document.getElementById("modal-content");
+
+  modalContainer.innerHTML = `
+  <img src=${video.thumbnail} />
+  <p>${video.description}</p>
+  `;
+
+  // way 1
+  document.getElementById("modalData").click();
+  // way 2
+  // document.getElementById('modalContainer').showModal();
 };
 
 // display videos
 function displayVideos(videos) {
   const videosContainer = document.getElementById("videos-container");
-  videosContainer.innerHTML ="";
+  videosContainer.innerHTML = "";
+
+  // check is video load or not
+  if (videos.length == 0) {
+    videosContainer.classList.remove("grid");
+    videosContainer.innerHTML = `
+    <div class="min-h-[300px] flex flex-col justify-center items-center">
+    <img src="./assets/Icon.png" />
+    <p class="font-bold text-[18px] text-gray-500 pt-3">NO CONTENT HERE</p>
+    </div>
+    `;
+    return;
+  } else {
+    videosContainer.classList.add("grid");
+  }
+
   // loop every elements
   videos.forEach((video) => {
-    // console.log(video);
+    console.log(video);
     const div = document.createElement("div");
     div.innerHTML = `
 
@@ -74,6 +132,10 @@ function displayVideos(videos) {
             <p class="text-gray-600 font-semibold text-[12px] tracking-wide">${
               video.others.views
             } views</p>
+
+            <button onclick="videosDetails('${
+              video.video_id
+            }')" class="btn btn-error text-white btn-xs">show details</button>
         </div>
 
     </div>
@@ -93,11 +155,15 @@ function displayCategories(categories) {
     const buttonContainer = document.createElement("div");
 
     buttonContainer.innerHTML = `
-      <button onclick="showCatagoriesSection(${item.category_id})" class="btn font-bold text-gray-700 text-[16px]">${item.category}</button>
+      <button id="categoriesBtn-${item.category_id}" onclick="showCategoriesSection(${item.category_id})" class="btn font-bold text-gray-700 text-[16px] category-btn">${item.category}</button>
     `;
     categoriesContainer.appendChild(buttonContainer);
   });
 }
+
+document.getElementById("search-input").addEventListener("keyup", (e) => {
+  showVideos(e.target.value);
+});
 
 showCategories();
 showVideos();

@@ -17,14 +17,14 @@
   <body>
     <!-- icons8 -->
     <header class="w-11/12 mx-auto">
-        <!-- navbar start -->
+      <!-- navbar start -->
       <nav id="navbar" class="flex items-center justify-between py-4 border-b">
         <div class="w-[100px]">
           <img class="w-full" src="./assets/Logo.png" alt="" />
         </div>
         <div>
           <label class="input input-bordered flex items-center gap-2">
-            <input type="text" class="grow" placeholder="Search" />
+            <input id="search-input" type="text" class="grow" placeholder="Search" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -46,15 +46,32 @@
       <!-- navbar end -->
 
       <!-- categories buttons -->
-      <nav id="categories" class="flex gap-2 items-center justify-center py-5">
-
-      </nav>
+      <nav
+        id="categories"
+        class="flex gap-2 items-center justify-center py-5"
+      ></nav>
     </header>
 
     <main>
-        <section id="videos-container" class="w-11/12 mx-auto grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-3">
-           
-        </section>
+      <section
+        id="videos-container"
+        class="w-11/12 mx-auto grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-3"
+      ></section>
+
+      <!-- Open the modal using ID.showModal() method -->
+      <button id="modalData" class="btn hidden" onclick="modalContainer.showModal()">open modal</button>
+      <dialog id="modalContainer" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+          <div id="modal-content">
+
+          </div>
+          <div class="modal-action">
+            <form method="dialog">
+              <button class="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </main>
 
     <script src="./js/index.js"></script>
